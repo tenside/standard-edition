@@ -1,0 +1,13 @@
+{
+  "name": "tenside/standard-edition",
+  "require": {
+    "php": ">=5.4",
+    "tenside/core": "~1.0",
+    "tenside/ui": "~1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tenside\\StandardEdition\\": "src"
+    }
+  }
+}
