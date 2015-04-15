@@ -1,28 +1,60 @@
 #!/usr/bin/env php
 <?php
 
+/**
+ * This file is part of tenside/standard-edition.
+ *
+ * (c) Christian Schiffler <https://github.com/discordier>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * This project is provided in good faith and hope to be usable by anyone.
+ *
+ * @package    tenside/standard-edition
+ * @author     Christian Schiffler <https://github.com/discordier>
+ * @copyright  Christian Schiffler <https://github.com/discordier>
+ * @link       https://github.com/tenside/standard-edition
+ * @license    https://github.com/tenside/standard-edition/blob/master/LICENSE MIT
+ * @filesource
+ */
+
 require __DIR__.'/../src/bootstrap.php';
 
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Tenside\StandardEdition\Compiler;
+use Tenside\Compiler;
+use Tenside\Compiler\CoreTask;
+use Tenside\Compiler\ProjectTask;
+use Tenside\StandardEdition\Compiler\StandardEditionTask;
+use Tenside\Ui\Compiler\UiTask;
 
 error_reporting(-1);
 ini_set('display_errors', 1);
 
+$logger = new ConsoleLogger(new ConsoleOutput(ConsoleOutput::VERBOSITY_VERBOSE, null, new OutputFormatter(true)));
 try {
-    $logger   = new ConsoleLogger(new ConsoleOutput(ConsoleOutput::VERBOSITY_VERBOSE, null, new OutputFormatter(true)));
-    $compiler = new Compiler($logger);
+    $compiler = new Compiler(
+        $logger,
+        [
+            new StandardEditionTask(),
+            new CoreTask(),
+            new UiTask(),
+            new ProjectTask()
+        ]
+    );
     $compiler->compile();
 } catch (\Exception $e) {
-    echo sprintf(
-        'Failed to compile phar: [%s] at %s:' . PHP_EOL . '%s' . PHP_EOL,
-        get_class($e),
-        $e->getMessage(),
-        $e->getFile(),
-        $e->getLine(),
-        $e->getTraceAsString()
+    $logger->emergency(
+        sprintf(
+            'Failed to compile phar: [%s] at %s#%s:' . PHP_EOL . '%s' . PHP_EOL . '%s' . PHP_EOL,
+            get_class($e),
+            $e->getFile(),
+            $e->getLine(),
+            $e->getMessage(),
+            $e->getTraceAsString()
+        )
     );
     exit(1);
 }
