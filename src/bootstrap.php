@@ -39,4 +39,14 @@ if ((!$loader = includeIfExists(__DIR__.'/../vendor/autoload.php'))
     exit(1);
 }
 
+// "git" binary not found when no PATH environment is present.
+// https://github.com/contao-community-alliance/composer-client/issues/54
+if (!getenv('PATH')) {
+    if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+        putenv('PATH=%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem');
+    } else {
+        putenv('PATH=/opt/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin');
+    }
+}
+
 return $loader;
