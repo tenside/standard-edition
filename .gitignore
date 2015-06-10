@@ -20,10 +20,5 @@ build.properties
 /assets/
 tenside.phar
 
-# vendor files
-/vendor/
-/node_modules/
-/bower_components/
-
 # Components
 /components/
