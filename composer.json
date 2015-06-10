@@ -1,5 +1,10 @@
 {
   "name": "tenside/standard-edition",
+  "description": "This glues the ui and core of tenside together in a standard distribution.",
+  "keywords": ["tenside"],
+  "homepage": "https://github.com/tenside/",
+  "type": "project",
+  "license": "MIT",
   "require": {
     "php": ">=5.4",
     "tenside/core": "~1.0",
