@@ -38,5 +38,7 @@ ini_set('display_errors', 1);
 
 require __DIR__.'/../src/bootstrap.php';
 
-$application = new Application();
+$application = new Application(
+    \Phar::running(false) ?: dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bin'. DIRECTORY_SEPARATOR . 'tenside'
+);
 $application->run();
