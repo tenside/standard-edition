@@ -24,6 +24,15 @@ if (PHP_SAPI === 'cli') {
     echo 'Warning: This is the web interface of Tenside, it should not be invoked via the CLI version of PHP.'.PHP_EOL;
 }
 
+// We do not want auto starting sessions.
+if (ini_get('session.auto_start')) {
+    session_destroy();
+    session_write_close();
+    if (ini_get('session.use_cookies')) {
+        header_remove('Set-Cookie');
+    }
+}
+
 // FIXME: change this.
 ini_set('display_errors', 1);
 
