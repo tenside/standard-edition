@@ -19,6 +19,7 @@ vendor/
 build.properties
 /assets/
 tenside.phar
+app/cache
 
 # Components
 /components/

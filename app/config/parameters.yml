@@ -1,0 +1,5 @@
+parameters:
+    # Just to ensure no-one will create another instance of the service using the original parameter.
+    uri_signer.class: Tenside\StandardEdition\UriSigner
+    # Path to the script to run when in non-phar mode - relative to the app root.
+    tenside.script_name: app/console

@@ -8,7 +8,12 @@
   "require": {
     "php": ">=5.4",
     "tenside/core": "~1.0",
-    "tenside/ui": "~1.0"
+    "tenside/ui": "~1.0",
+    "symfony/config": "~2.8",
+    "symfony/framework-bundle": "~2.8",
+    "symfony/http-kernel": "~2.8",
+    "symfony/security-bundle": "~2.8",
+    "symfony/yaml": "~2.8"
   },
   "autoload": {
     "psr-4": {

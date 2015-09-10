@@ -48,7 +48,45 @@ class StandardEditionTask extends AbstractTask
             $this->addFile($file);
         }
 
+        $finder = new Finder();
+        $finder->files()
+            ->ignoreVCS(true)
+            ->name('*.php')
+            ->name('*.yml')
+            ->exclude('cache')
+            ->in($root . '/app');
+        foreach ($finder as $file) {
+            $this->addFile($file);
+        }
+
+        $this->addAppCache();
+
         $this->addTensideBin();
+    }
+
+    private function addAppCache()
+    {
+        $root = $this->getPackageRoot('tenside/standard-edition');
+
+        $finder = new Finder();
+        $finder->files()
+            ->ignoreVCS(true)
+            ->name('*.php')
+            ->name('*.map')
+            ->in($root . '/app/cache/prod');
+        $prefix = dirname($this->getVendorDir()) . DIRECTORY_SEPARATOR;
+        foreach ($finder as $file) {
+            $path = str_replace(
+                [$prefix, 'prod', 'Prod'],
+                ['', 'phar', 'Phar'],
+                strtr($file->getRealPath(), '\\', '/')
+            );
+            $content = file_get_contents($file);
+            $this->addFileContent(
+                $path,
+                str_replace('appProd', 'appPhar', $content)
+            );
+        }
     }
 
     /**
@@ -60,9 +98,9 @@ class StandardEditionTask extends AbstractTask
     {
         $root = $this->getPackageRoot('tenside/standard-edition');
 
-        $content = file_get_contents($root . '/bin/tenside');
+        $content = file_get_contents($root . '/app/console');
         $content = preg_replace('{^#!/usr/bin/env php\s*}', '', $content);
-        $this->addFileContent('bin/tenside', $content);
+        $this->addFileContent('app/console', $content);
 
         $this->addFile(new \SplFileInfo($root . '/web/app.php'), true, 'web/app.php');
     }

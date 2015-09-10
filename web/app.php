@@ -18,10 +18,12 @@
  * @filesource
  */
 
-use Tenside\Web\Application;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Debug\Debug;
 
 if (PHP_SAPI === 'cli') {
-    echo 'Warning: This is the web interface of Tenside, it should not be invoked via the CLI version of PHP.'.PHP_EOL;
+    echo 'Warning: This is the web interface of Tenside, it should not be invoked via the CLI version of PHP.' .
+         PHP_EOL;
 }
 
 // We do not want auto starting sessions.
@@ -36,9 +38,26 @@ if (ini_get('session.auto_start')) {
 // FIXME: change this.
 ini_set('display_errors', 1);
 
-require __DIR__.'/../src/bootstrap.php';
+require_once __DIR__.'/../vendor/autoload.php';
+Debug::enable();
 
-$application = new Application(
-    \Phar::running(false) ?: dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bin'. DIRECTORY_SEPARATOR . 'tenside'
-);
-$application->run();
+require_once __DIR__.'/../app/AppKernel.php';
+
+if (\Phar::running()) {
+    $env   = 'phar';
+    $debug = false;
+} else {
+    $env   = getenv('SYMFONY_ENV') ?: 'prod';
+    $debug = getenv('SYMFONY_DEBUG') !== '0';
+}
+
+if ($debug) {
+    Debug::enable();
+}
+
+$kernel  = new AppKernel($env, $debug);
+$request = Request::createFromGlobals();
+
+$response = $kernel->handle($request);
+$response->send();
+$kernel->terminate($request, $response);
