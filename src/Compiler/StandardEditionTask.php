@@ -21,6 +21,7 @@
 namespace Tenside\StandardEdition\Compiler;
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
 use Tenside\Compiler;
 use Tenside\Compiler\AbstractTask;
 
@@ -64,9 +65,18 @@ class StandardEditionTask extends AbstractTask
         $this->addTensideBin();
     }
 
+    /**
+     * Embed the symfony app cache directory.
+     *
+     * @return void
+     */
     private function addAppCache()
     {
         $root = $this->getPackageRoot('tenside/standard-edition');
+
+        // Ensure we have a proper cache.
+        $process = new Process($root . '/app/console --env=prod');
+        $process->mustRun();
 
         $finder = new Finder();
         $finder->files()
@@ -81,6 +91,7 @@ class StandardEditionTask extends AbstractTask
                 ['', 'phar', 'Phar'],
                 strtr($file->getRealPath(), '\\', '/')
             );
+
             $content = file_get_contents($file);
             $this->addFileContent(
                 $path,
