@@ -19,7 +19,7 @@
  * @filesource
  */
 
-require __DIR__.'/../src/bootstrap.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Logger\ConsoleLogger;
