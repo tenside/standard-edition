@@ -75,7 +75,7 @@ class StandardEditionTask extends AbstractTask
         $root = $this->getPackageRoot('tenside/standard-edition');
 
         // Ensure we have a proper cache.
-        $process = new Process($root . '/app/console --env=prod');
+        $process = new Process($root . '/app/console cache:warmup --env=prod');
         $process->mustRun();
 
         $finder = new Finder();
