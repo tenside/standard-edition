@@ -21,6 +21,7 @@
 namespace Tenside\StandardEdition\Compiler;
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Tenside\Compiler;
 use Tenside\Compiler\AbstractTask;
@@ -86,6 +87,7 @@ class StandardEditionTask extends AbstractTask
             ->in($root . '/app/cache/prod');
         $prefix = dirname($this->getVendorDir()) . DIRECTORY_SEPARATOR;
         foreach ($finder as $file) {
+            /** @var SplFileInfo $file */
             $path = str_replace(
                 [$prefix, 'prod', 'Prod'],
                 ['', 'phar', 'Phar'],
