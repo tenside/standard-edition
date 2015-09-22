@@ -8,7 +8,11 @@ framework:
 
 security:
     access_control:
+        # Anonymous access for the login route - otherwise we can not log in.
         - { path: ^/api/v1/auth, role: [IS_AUTHENTICATED_ANONYMOUSLY] }
+        # Anonymous access for the install route - otherwise we can not install (Will refuse to install anyway).
+        - { path: ^/api/v1/install, role: [IS_AUTHENTICATED_ANONYMOUSLY] }
+        # Delegate everything else from the API to the role checking service.
         - { path: ^/api, role: [ROLE_CHECK] }
 
     encoders:
@@ -19,6 +23,13 @@ security:
             id: tenside.user_provider
 
     firewalls:
+        # all public resources.
+        public:
+            stateless: true
+            pattern:        /(assets/|$|api/v1/install)
+            anonymous:      true
+
+        # Allow basic auth and token auth on login route.
         login:
             stateless: true
             simple_preauth:
@@ -26,6 +37,7 @@ security:
             http_basic: ~
             pattern: ^/api/v1/auth
 
+        # Allow only token auth on any API.
         secured_area:
             pattern: ^/api
             stateless: true
