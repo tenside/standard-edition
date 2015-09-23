@@ -66,7 +66,7 @@ class AppKernel extends Kernel
     {
         // TODO: Can we really omit loading of the config in phar environment?
         // The container is already built, therefore it should be safe.
-        if ($this->environment !== 'phar') {
+        if (!\Phar::running()) {
             $loader->load(__DIR__ . '/config/config_' . $this->getEnvironment() . '.yml');
         }
 
