@@ -3,3 +3,5 @@ parameters:
     uri_signer.class: Tenside\StandardEdition\UriSigner
     # Path to the script to run when in non-phar mode - relative to the app root.
     tenside.script_name: console
+    # All errors are to be considered FATAL!
+    debug.error_handler.throw_at: -1
