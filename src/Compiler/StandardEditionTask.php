@@ -76,7 +76,9 @@ class StandardEditionTask extends AbstractTask
         $root = $this->getPackageRoot('tenside/standard-edition');
 
         // Ensure we have a proper cache.
-        $process = new Process($root . '/app/console cache:warmup --env=prod');
+        $process = new Process($root . '/app/console cache:clear --no-warmup -vvv');
+        $process->mustRun();
+        $process = new Process($root . '/app/console cache:warmup --env=phar --no-debug');
         $process->mustRun();
 
         $finder = new Finder();
@@ -84,21 +86,11 @@ class StandardEditionTask extends AbstractTask
             ->ignoreVCS(true)
             ->name('*.php')
             ->name('*.map')
-            ->in($root . '/app/cache/prod');
+            ->in($root . '/app/cache/phar');
         $prefix = dirname($this->getVendorDir()) . DIRECTORY_SEPARATOR;
         foreach ($finder as $file) {
             /** @var SplFileInfo $file */
-            $path = str_replace(
-                [$prefix, 'prod', 'Prod'],
-                ['', 'phar', 'Phar'],
-                strtr($file->getRealPath(), '\\', '/')
-            );
-
-            $content = file_get_contents($file);
-            $this->addFileContent(
-                $path,
-                str_replace('appProd', 'appPhar', $content)
-            );
+            $this->addFile($file, true, str_replace($prefix, '', strtr($file->getRealPath(), '\\', '/')));
         }
     }
 
