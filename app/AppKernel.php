@@ -23,6 +23,8 @@ use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\HttpKernel\Config\EnvParametersResource;
+use Symfony\Component\HttpKernel\DependencyInjection\AddClassesToCachePass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Tenside\CoreBundle\TensideCoreBundle;
@@ -42,6 +44,20 @@ class AppKernel extends Kernel
 
     /**
      * {@inheritDoc}
+     *
+     * @throws \LogicException When the container is not present yet.
+     */
+    public function getLogDir()
+    {
+        if (!$this->container) {
+            throw new \LogicException('The container has not been set yet.');
+        }
+
+        return $this->container->get('tenside.home')->homeDir() . '/tenside/logs';
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function registerBundles()
     {
@@ -56,11 +72,64 @@ class AppKernel extends Kernel
 
     /**
      * {@inheritDoc}
+     *
+     * Overridden to get rid of 'kernel.logs_dir'.
      */
-    protected function initializeContainer()
+    protected function getKernelParameters()
     {
-        parent::initializeContainer();
+        $bundles = array();
+        foreach ($this->bundles as $name => $bundle) {
+            $bundles[$name] = get_class($bundle);
+        }
+
+        return array_merge(
+            array(
+                'kernel.root_dir' => realpath($this->rootDir) ?: $this->rootDir,
+                'kernel.environment' => $this->environment,
+                'kernel.debug' => $this->debug,
+                'kernel.name' => $this->name,
+                'kernel.cache_dir' => realpath($this->getCacheDir()) ?: $this->getCacheDir(),
+                'kernel.bundles' => $bundles,
+                'kernel.charset' => $this->getCharset(),
+                'kernel.container_class' => $this->getContainerClass(),
+            ),
+            $this->getEnvParameters()
+        );
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Overridden to get rid of 'logs' writable check.
+     *
+     * @throws \RuntimeException When the cache directory is not writable.
+     */
+    protected function buildContainer()
+    {
+        foreach (['cache' => $this->getCacheDir()] as $name => $dir) {
+            if (!is_dir($dir)) {
+                // @codingStandardsIgnoreStart - allow silencing here.
+                if (false === @mkdir($dir, 0777, true) && !is_dir($dir)) {
+                    // @codingStandardsIgnoreEnd
+                    throw new \RuntimeException(sprintf("Unable to create the %s directory (%s)\n", $name, $dir));
+                }
+            } elseif (!is_writable($dir)) {
+                throw new \RuntimeException(sprintf("Unable to write in the %s directory (%s)\n", $name, $dir));
+            }
+        }
+
+        $container = $this->getContainerBuilder();
+        $container->addObjectResource($this);
+        $this->prepareContainer($container);
+
+        $this->registerContainerConfiguration($this->getContainerLoader($container));
+
+        $container->addCompilerPass(new AddClassesToCachePass($this));
+        $container->addResource(new EnvParametersResource('SYMFONY__'));
+
+        return $container;
+    }
+
 
     /**
      * {@inheritDoc}
