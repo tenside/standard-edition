@@ -66,6 +66,7 @@ class StandardEditionTask extends AbstractTask
             ->ignoreVCS(true)
             ->name('*.php')
             ->exclude('Tests')
+            ->in($vendorDir . '/ircmaxell/password-compat/lib')
             ->in($vendorDir . '/monolog/monolog')
             ->in($vendorDir . '/symfony/monolog-bundle')
             ->in($vendorDir . '/symfony/monolog-bridge');
