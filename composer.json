@@ -8,6 +8,7 @@
   "require": {
     "php": ">=5.4",
     "composer/composer": "dev-master",
+    "symfony/monolog-bundle": "~2.7",
     "tenside/core": "~1.0",
     "tenside/ui": "~1.0",
     "symfony/config": "~2.7",

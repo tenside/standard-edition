@@ -19,6 +19,7 @@
  */
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -33,6 +34,8 @@ use Tenside\Ui\Bundle\TensideUiBundle;
 class AppKernel extends Kernel
 {
     /**
+     * The dependency container.
+     *
      * @var Symfony\Component\DependencyInjection\Container
      */
     protected $container;
@@ -46,9 +49,9 @@ class AppKernel extends Kernel
             new SecurityBundle(),
             new TensideCoreBundle(),
             new TensideUiBundle(),
-            new FrameworkBundle()
+            new FrameworkBundle(),
+            new MonologBundle(),
         ];
-        // new \Tenside\StandardEdition\AppBundle(),
     }
 
     /**

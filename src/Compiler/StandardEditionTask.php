@@ -28,8 +28,6 @@ use Tenside\Compiler\AbstractTask;
 
 /**
  * This Compiler task adds all content from tenside/standard-edition into the phar.
- *
- * @author Christian Schiffler <https://github.com/discordier>
  */
 class StandardEditionTask extends AbstractTask
 {
@@ -57,6 +55,21 @@ class StandardEditionTask extends AbstractTask
             ->name('*.yml')
             ->exclude('cache')
             ->in($root . '/app');
+        foreach ($finder as $file) {
+            $this->addFile($file);
+        }
+
+        $vendorDir = $this->getVendorDir();
+
+        $finder = new Finder();
+        $finder->files()
+            ->ignoreVCS(true)
+            ->name('*.php')
+            ->exclude('Tests')
+            ->in($vendorDir . '/monolog/monolog')
+            ->in($vendorDir . '/symfony/monolog-bundle')
+            ->in($vendorDir . '/symfony/monolog-bridge');
+
         foreach ($finder as $file) {
             $this->addFile($file);
         }
