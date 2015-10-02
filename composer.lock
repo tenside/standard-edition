@@ -1934,12 +1934,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tenside/core.git",
-                "reference": "94ae553a96c9b3bbe9bd4c1d27f05af1d0e3d339"
+                "reference": "2404da7c16644e2d02ecb690e1dc8f23199d3331"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tenside/core/zipball/94ae553a96c9b3bbe9bd4c1d27f05af1d0e3d339",
-                "reference": "94ae553a96c9b3bbe9bd4c1d27f05af1d0e3d339",
+                "url": "https://api.github.com/repos/tenside/core/zipball/2404da7c16644e2d02ecb690e1dc8f23199d3331",
+                "reference": "2404da7c16644e2d02ecb690e1dc8f23199d3331",
                 "shasum": ""
             },
             "require": {
@@ -1992,7 +1992,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-09-24 03:18:19"
+            "time": "2015-10-02 05:46:20"
         },
         {
             "name": "tenside/ui",
