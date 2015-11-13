@@ -23,11 +23,14 @@ use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Config\EnvParametersResource;
 use Symfony\Component\HttpKernel\DependencyInjection\AddClassesToCachePass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Tenside\CoreBundle\TensideCoreBundle;
+use Tenside\StandardEdition\AppBundle;
 use Tenside\Ui\Bundle\TensideUiBundle;
 
 /**
@@ -46,11 +49,23 @@ class AppKernel extends Kernel
      * {@inheritDoc}
      *
      * @throws \LogicException When the container is not present yet.
+     *
+     * @throws IOException When the directory is not writable.
      */
     public function getLogDir()
     {
         if (!$this->container) {
             throw new \LogicException('The container has not been set yet.');
+        }
+
+        $logDir = $this->container->get('tenside.home')->homeDir() . '/tenside/logs';
+        if (!is_dir($logDir)) {
+            $fileSystem = new Filesystem();
+            $fileSystem->mkdir($logDir);
+        }
+
+        if (!is_writable($logDir)) {
+            throw new IOException(sprintf('The directory "%s" is not writable.', $logDir), 0, null, $logDir);
         }
 
         return $this->container->get('tenside.home')->homeDir() . '/tenside/logs';
@@ -67,6 +82,7 @@ class AppKernel extends Kernel
             new TensideUiBundle(),
             new FrameworkBundle(),
             new MonologBundle(),
+            new AppBundle(),
         ];
     }
 
