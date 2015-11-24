@@ -21,8 +21,6 @@
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Config\EnvParametersResource;
@@ -30,7 +28,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\AddClassesToCachePass;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Tenside\CoreBundle\TensideCoreBundle;
-use Tenside\StandardEdition\AppBundle;
 use Tenside\Ui\Bundle\TensideUiBundle;
 
 /**
@@ -81,8 +78,7 @@ class AppKernel extends Kernel
             new TensideCoreBundle(),
             new TensideUiBundle(),
             new FrameworkBundle(),
-            new MonologBundle(),
-            new AppBundle(),
+            new MonologBundle()
         ];
     }
 
@@ -152,18 +148,9 @@ class AppKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        // TODO: Can we really omit loading of the config in phar environment?
-        // The container is already built, therefore it should be safe.
+        // The container is already built, so it is safe to omit loading of the config in phar environment.
         if (!\Phar::running()) {
             $loader->load(__DIR__ . '/config/config_' . $this->getEnvironment() . '.yml');
         }
-
-        $loader->load(function (ContainerBuilder $container) {
-            $container->setDefinition(
-                'application',
-                (new Definition('Tenside\\Web\\Application'))
-                    ->setFactory('Tenside\\StandardEdition\\ApplicationFactory::createApplication')
-            );
-        });
     }
 }
